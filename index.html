@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraGo | Weather Engine</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        :root {
+            --bg: #05080a;
+            --card: rgba(255, 255, 255, 0.03);
+            --accent: #00f2ff;
+            --text: #ffffff;
+            --radius: 35px;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+            gap: 20px;
+        }
+
+        .sidebar {
+            width: 240px;
+            background: var(--card);
+            backdrop-filter: blur(25px);
+            border-radius: var(--radius);
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255,255,255,0.05);
+            justify-content: space-between;
+        }
+
+        .logo { font-size: 32px; font-weight: 800; text-align: center; }
+        .logo span { color: var(--accent); text-shadow: 0 0 10px var(--accent); }
+
+        .dashboard {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .search-bar {
+            background: var(--card);
+            border-radius: 50px;
+            padding: 8px 10px 8px 30px;
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .search-bar input {
+            background: none;
+            border: none;
+            color: white;
+            flex: 1;
+            outline: none;
+            font-size: 16px;
+            font-family: inherit;
+        }
+
+        .search-bar button {
+            background: var(--accent);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            transition: 0.3s;
+            color: #000;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 20px;
+            flex: 1;
+        }
+
+        .hero-card {
+            background: linear-gradient(145deg, rgba(0,242,255,0.08) 0%, rgba(0,0,0,0) 100%);
+            border-radius: var(--radius);
+            padding: 50px;
+            border: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .hero-content h1 { font-size: 48px; margin: 0; font-weight: 800; }
+        .hero-content h2 { font-size: 120px; margin: 10px 0; font-weight: 200; color: var(--accent); letter-spacing: -5px; }
+
+        .ai-bubble {
+            background: rgba(255,255,255,0.03);
+            padding: 25px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .radar-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        #map { 
+            flex: 1; 
+            border-radius: 25px; 
+            overflow: hidden; 
+            filter: invert(90%) hue-rotate(180deg) brightness(0.9);
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .mini-card {
+            background: var(--card);
+            padding: 25px;
+            border-radius: var(--radius);
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .mini-card i { color: var(--accent); display: block; margin-bottom: 15px; font-size: 24px; }
+        #current-time { text-align: center; opacity: 0.5; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo">Aura<span>Go</span></div>
+            <nav style="flex:1; margin-top:40px;">
+                <div style="color: var(--accent); background:rgba(0,242,255,0.1); padding:15px; border-radius:20px; cursor:pointer;">
+                    <i class="fas fa-home"></i> Dashboard
+                </div>
+            </nav>
+            <div id="current-time">00:00:00</div>
+        </aside>
+
+        <main class="dashboard">
+            <header class="search-bar">
+                <input type="text" id="city-input" placeholder="Wpisz miasto (np. Tarnogród)..." accept-charset="UTF-8">
+                <button id="search-btn"><i class="fas fa-chevron-right"></i></button>
+            </header>
+
+            <div class="main-grid">
+                <section class="hero-card">
+                    <div class="hero-content">
+                        <h1 id="city-name">Ładowanie...</h1>
+                        <h2 id="main-temp">--°C</h2>
+                        <p id="weather-desc">Czekam na dane...</p>
+                    </div>
+                    <div class="ai-bubble">
+                        <i class="fas fa-robot"></i>
+                        <span id="ai-text">AuraGo AI gotowe.</span>
+                    </div>
+                </section>
+
+                <section class="radar-card">
+                    <div id="map"></div>
+                </section>
+            </div>
+
+            <div class="stats-row">
+                <div class="mini-card"><i class="fas fa-wind"></i><b id="wind-speed">--</b><small>Wiatr</small></div>
+                <div class="mini-card"><i class="fas fa-tint"></i><b id="humidity">--</b><small>Wilgotność</small></div>
+                <div class="mini-card"><i class="fas fa-compress-arrows-alt"></i><b id="pressure">--</b><small>hPa</small></div>
+                <div class="mini-card"><i class="fas fa-eye"></i><b id="vis">--</b><small>Widoczność</small></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const weatherApp = {
+            apiKey: 'bdf61456d0edcccd6e8c3b2b2f5b666f',
+            map: null,
+
+            init() {
+                this.updateTime();
+                this.initMap();
+                this.getLocation();
+                
+                document.getElementById('search-btn').onclick = () => this.search();
+                document.getElementById('city-input').onkeypress = (e) => { 
+                    if (e.key === 'Enter') this.search(); 
+                };
+            },
+
+            updateTime() {
+                setInterval(() => {
+                    document.getElementById('current-time').innerText = new Date().toLocaleTimeString('pl-PL');
+                }, 1000);
+            },
+
+            initMap() {
+                this.map = L.map('map', { zoomControl: false }).setView([52.23, 21.01], 6);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
+                L.tileLayer(`https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${this.apiKey}`).addTo(this.map);
+            },
+
+            async fetchWeather(city) {
+                try {
+                    // encodeURIComponent dba o to, by polskie znaki w URL były bezpieczne
+                    const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&units=metric&lang=pl&appid=${this.apiKey}`);
+                    if (!res.ok) throw new Error();
+                    const data = await res.json();
+                    this.updateUI(data);
+                    this.map.flyTo([data.coord.lat, data.coord.lon], 10);
+                } catch (e) {
+                    document.getElementById('city-name').innerText = "Błąd znaków?";
+                }
+            },
+
+            updateUI(data) {
+                document.getElementById('city-name').innerText = data.name;
+                document.getElementById('main-temp').innerText = `${Math.round(data.main.temp)}°C`;
+                document.getElementById('weather-desc').innerText = data.weather[0].description;
+                document.getElementById('wind-speed').innerText = `${(data.wind.speed * 3.6).toFixed(0)} km/h`;
+                document.getElementById('humidity').innerText = `${data.main.humidity}%`;
+                document.getElementById('pressure').innerText = data.main.pressure;
+                document.getElementById('vis').innerText = `${(data.visibility / 1000).toFixed(1)} km`;
+            },
+
+            search() {
+                const v = document.getElementById('city-input').value;
+                if(v) this.fetchWeather(v);
+            },
+
+            getLocation() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (p) => this.fetchByCoords(p.coords.latitude, p.coords.longitude),
+                        () => this.fetchWeather('Tarnogród')
+                    );
+                } else { this.fetchWeather('Tarnogród'); }
+            },
+
+            async fetchByCoords(lat, lon) {
+                const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=pl&appid=${this.apiKey}`);
+                const data = await res.json();
+                this.updateUI(data);
+                this.map.flyTo([lat, lon], 10);
+            }
+        };
+
+        weatherApp.init();
+    </script>
+</body>
+</html>
