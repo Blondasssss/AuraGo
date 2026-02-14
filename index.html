@@ -2,7 +2,6 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AuraGo | Weather Engine</title>
     
@@ -21,137 +20,53 @@
         }
 
         body {
-            margin: 0;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            height: 100vh;
-            display: flex;
-            overflow: hidden;
+            margin: 0; font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg); color: var(--text);
+            height: 100vh; display: flex; overflow: hidden;
         }
 
-        .app-container {
-            display: flex;
-            width: 100%;
-            padding: 20px;
-            box-sizing: border-box;
-            gap: 20px;
-        }
+        .app-container { display: flex; width: 100%; padding: 20px; box-sizing: border-box; gap: 20px; }
 
         .sidebar {
-            width: 240px;
-            background: var(--card);
-            backdrop-filter: blur(25px);
-            border-radius: var(--radius);
-            padding: 40px 20px;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid rgba(255,255,255,0.05);
+            width: 240px; background: var(--card); backdrop-filter: blur(25px);
+            border-radius: var(--radius); padding: 40px 20px; display: flex;
+            flex-direction: column; border: 1px solid rgba(255,255,255,0.05);
             justify-content: space-between;
         }
 
         .logo { font-size: 32px; font-weight: 800; text-align: center; }
-        .logo span { color: var(--accent); text-shadow: 0 0 10px var(--accent); }
+        .logo span { color: var(--accent); }
 
-        .dashboard {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
+        .dashboard { flex: 1; display: flex; flex-direction: column; gap: 20px; }
 
         .search-bar {
-            background: var(--card);
-            border-radius: 50px;
-            padding: 8px 10px 8px 30px;
-            display: flex;
-            align-items: center;
-            border: 1px solid rgba(255,255,255,0.1);
+            background: var(--card); border-radius: 50px; padding: 8px 10px 8px 30px;
+            display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.1);
         }
+        .search-bar input { background: none; border: none; color: white; flex: 1; outline: none; font-size: 16px; }
+        .search-bar button { background: var(--accent); border: none; border-radius: 50%; width: 45px; height: 45px; cursor: pointer; color: #000; }
 
-        .search-bar input {
-            background: none;
-            border: none;
-            color: white;
-            flex: 1;
-            outline: none;
-            font-size: 16px;
-            font-family: inherit;
-        }
-
-        .search-bar button {
-            background: var(--accent);
-            border: none;
-            border-radius: 50%;
-            width: 45px;
-            height: 45px;
-            cursor: pointer;
-            transition: 0.3s;
-            color: #000;
-        }
-
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1.2fr 1fr;
-            gap: 20px;
-            flex: 1;
-        }
+        .main-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; flex: 1; }
 
         .hero-card {
             background: linear-gradient(145deg, rgba(0,242,255,0.08) 0%, rgba(0,0,0,0) 100%);
-            border-radius: var(--radius);
-            padding: 50px;
-            border: 1px solid rgba(255,255,255,0.05);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            border-radius: var(--radius); padding: 50px; border: 1px solid rgba(255,255,255,0.05);
+            display: flex; flex-direction: column; justify-content: space-between;
         }
 
-        .hero-content h1 { font-size: 48px; margin: 0; font-weight: 800; }
-        .hero-content h2 { font-size: 120px; margin: 10px 0; font-weight: 200; color: var(--accent); letter-spacing: -5px; }
-
-        .ai-bubble {
-            background: rgba(255,255,255,0.03);
-            padding: 25px;
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
+        .hero-content h1 { font-size: 48px; margin: 0; }
+        .hero-content h2 { font-size: 110px; margin: 10px 0; font-weight: 200; color: var(--accent); letter-spacing: -5px; }
 
         .radar-card {
-            background: var(--card);
-            border-radius: var(--radius);
-            padding: 25px;
-            border: 1px solid rgba(255,255,255,0.05);
-            display: flex;
-            flex-direction: column;
+            background: var(--card); border-radius: var(--radius); padding: 20px;
+            border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column;
         }
 
-        #map { 
-            flex: 1; 
-            border-radius: 25px; 
-            overflow: hidden; 
-            filter: invert(90%) hue-rotate(180deg) brightness(0.9);
-        }
+        #map { flex: 1; border-radius: 25px; overflow: hidden; filter: invert(90%) hue-rotate(180deg); }
 
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-        }
-
-        .mini-card {
-            background: var(--card);
-            padding: 25px;
-            border-radius: var(--radius);
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .mini-card i { color: var(--accent); display: block; margin-bottom: 15px; font-size: 24px; }
-        #current-time { text-align: center; opacity: 0.5; font-size: 14px; }
+        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .mini-card { background: var(--card); padding: 25px; border-radius: var(--radius); text-align: center; border: 1px solid rgba(255,255,255,0.05); }
+        .mini-card i { color: var(--accent); margin-bottom: 15px; font-size: 24px; display: block; }
     </style>
 </head>
 <body>
@@ -159,43 +74,33 @@
     <div class="app-container">
         <aside class="sidebar">
             <div class="logo">Aura<span>Go</span></div>
-            <nav style="flex:1; margin-top:40px;">
-                <div style="color: var(--accent); background:rgba(0,242,255,0.1); padding:15px; border-radius:20px; cursor:pointer;">
-                    <i class="fas fa-home"></i> Dashboard
-                </div>
-            </nav>
-            <div id="current-time">00:00:00</div>
+            <div id="current-time" style="text-align: center; opacity: 0.5;">00:00:00</div>
         </aside>
 
         <main class="dashboard">
             <header class="search-bar">
-                <input type="text" id="city-input" placeholder="Wpisz miasto (np. Tarnogród)..." accept-charset="UTF-8">
-                <button id="search-btn"><i class="fas fa-chevron-right"></i></button>
+                <input type="text" id="city-input" placeholder="Szukaj miasta (np. Tarnogród)...">
+                <button id="search-btn"><i class="fas fa-search"></i></button>
             </header>
 
             <div class="main-grid">
                 <section class="hero-card">
                     <div class="hero-content">
-                        <h1 id="city-name">Ładowanie...</h1>
+                        <h1 id="city-name">Wczytywanie...</h1>
                         <h2 id="main-temp">--°C</h2>
-                        <p id="weather-desc">Czekam na dane...</p>
-                    </div>
-                    <div class="ai-bubble">
-                        <i class="fas fa-robot"></i>
-                        <span id="ai-text">AuraGo AI gotowe.</span>
+                        <p id="weather-desc">Analizuję dane...</p>
                     </div>
                 </section>
-
                 <section class="radar-card">
                     <div id="map"></div>
                 </section>
             </div>
 
             <div class="stats-row">
-                <div class="mini-card"><i class="fas fa-wind"></i><b id="wind-speed">--</b><small>Wiatr</small></div>
-                <div class="mini-card"><i class="fas fa-tint"></i><b id="humidity">--</b><small>Wilgotność</small></div>
-                <div class="mini-card"><i class="fas fa-compress-arrows-alt"></i><b id="pressure">--</b><small>hPa</small></div>
-                <div class="mini-card"><i class="fas fa-eye"></i><b id="vis">--</b><small>Widoczność</small></div>
+                <div class="mini-card"><i class="fas fa-wind"></i><b id="wind-speed">--</b><small> Wiatr</small></div>
+                <div class="mini-card"><i class="fas fa-tint"></i><b id="humidity">--</b><small> Wilgotność</small></div>
+                <div class="mini-card"><i class="fas fa-compress-arrows-alt"></i><b id="pressure">--</b><small> hPa</small></div>
+                <div class="mini-card"><i class="fas fa-eye"></i><b id="vis">--</b><small> Widoczność</small></div>
             </div>
         </main>
     </div>
@@ -209,17 +114,12 @@
                 this.updateTime();
                 this.initMap();
                 this.getLocation();
-                
                 document.getElementById('search-btn').onclick = () => this.search();
-                document.getElementById('city-input').onkeypress = (e) => { 
-                    if (e.key === 'Enter') this.search(); 
-                };
+                document.getElementById('city-input').onkeypress = (e) => { if (e.key === 'Enter') this.search(); };
             },
 
             updateTime() {
-                setInterval(() => {
-                    document.getElementById('current-time').innerText = new Date().toLocaleTimeString('pl-PL');
-                }, 1000);
+                setInterval(() => { document.getElementById('current-time').innerText = new Date().toLocaleTimeString('pl-PL'); }, 1000);
             },
 
             initMap() {
@@ -230,15 +130,11 @@
 
             async fetchWeather(city) {
                 try {
-                    // encodeURIComponent dba o to, by polskie znaki w URL były bezpieczne
                     const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&units=metric&lang=pl&appid=${this.apiKey}`);
-                    if (!res.ok) throw new Error();
                     const data = await res.json();
                     this.updateUI(data);
                     this.map.flyTo([data.coord.lat, data.coord.lon], 10);
-                } catch (e) {
-                    document.getElementById('city-name').innerText = "Błąd znaków?";
-                }
+                } catch (e) { document.getElementById('city-name').innerText = "Błąd!"; }
             },
 
             updateUI(data) {
@@ -272,7 +168,6 @@
                 this.map.flyTo([lat, lon], 10);
             }
         };
-
         weatherApp.init();
     </script>
 </body>
